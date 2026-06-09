@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     )
 
     # Server
+    host: str = "0.0.0.0"
     port: int = 8080
     env: Literal["development", "staging", "production"] = "development"
     workers: int = 1
