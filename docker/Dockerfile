@@ -1,30 +1,17 @@
-# ── Stage 1: Build dependencies ───────────────────────────────────────────────
-FROM python:3.14-slim AS builder
-
-WORKDIR /app
-
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
-
-# Copy dependency files
-COPY pyproject.toml uv.lock* ./
-
-# Install dependencies into /app/.venv
-RUN uv sync --frozen --no-dev
-
-# ── Stage 2: Runtime ──────────────────────────────────────────────────────────
+# ── Stage 1: Runtime ──────────────────────────────────────────────────────────
 FROM python:3.14-slim
 
 WORKDIR /app
 
-# Copy venv from builder
-COPY --from=builder /app/.venv /app/.venv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# Copy application code
+COPY pyproject.toml uv.lock* ./
 COPY app/ ./app/
+COPY main.py .
 
-# Make venv binaries available
-ENV PATH="/app/.venv/bin:$PATH"
+RUN uv sync --frozen --no-dev
+
+ENV PYTHONPATH="/app"
 
 EXPOSE 8080
 
