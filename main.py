@@ -1,6 +1,12 @@
-def main():
-    print("Hello from fastapi-server-boilerplate!")
-
+import uvicorn
+from app.core.config import get_settings
 
 if __name__ == "__main__":
-    main()
+    settings = get_settings()
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=settings.port,
+        workers=settings.workers,
+        reload=settings.is_development,
+    )
